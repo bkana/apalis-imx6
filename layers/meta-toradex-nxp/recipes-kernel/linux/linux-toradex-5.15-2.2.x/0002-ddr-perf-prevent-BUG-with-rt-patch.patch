@@ -1,0 +1,34 @@
+From 066e66d9222f70d3e21a7df077ac6b623881c9cc Mon Sep 17 00:00:00 2001
+From: Max Krummenacher <max.krummenacher@toradex.com>
+Date: Tue, 24 Sep 2019 14:19:24 +0200
+Subject: [PATCH 2/2] ddr-perf: prevent BUG() with rt patch
+
+With the RT patch applied the kernel prints a BUG backtrace during boot:
+
+| BUG: using smp_processor_id() in preemptible [00000000] code: swapper/0/1
+
+Prevent this by replacing the smp_processor_id() call with a get_cpu() ..
+put_cpu() construct.
+
+Signed-off-by: Max Krummenacher <max.krummenacher@toradex.com>
+---
+ drivers/perf/ddr-perf.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/perf/ddr-perf.c b/drivers/perf/ddr-perf.c
+index 73fe52ee8b95..744a6454d6a4 100644
+--- a/drivers/perf/ddr-perf.c
++++ b/drivers/perf/ddr-perf.c
+@@ -470,7 +470,8 @@ static int ddr_perf_probe(struct platform_device *pdev)
+ 
+ 	pmu->devtype = (struct fsl_ddr_devtype_data *)of_id->data;
+ 
+-	cpumask_set_cpu(smp_processor_id(), &pmu->cpu);
++	cpumask_set_cpu(get_cpu(), &pmu->cpu);
++	put_cpu();
+ 	ret = perf_pmu_register(&(pmu->pmu), name, -1);
+ 	if (ret)
+ 		goto ddr_perf_err;
+-- 
+2.20.1
+

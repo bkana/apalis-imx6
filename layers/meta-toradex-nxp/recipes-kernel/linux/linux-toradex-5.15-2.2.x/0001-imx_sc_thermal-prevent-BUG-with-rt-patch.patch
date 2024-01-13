@@ -1,0 +1,53 @@
+From 4e6114a23a21db5741375070add8ccc16697db67 Mon Sep 17 00:00:00 2001
+From: Max Krummenacher <max.krummenacher@toradex.com>
+Date: Tue, 24 Sep 2019 14:15:50 +0200
+Subject: [PATCH 1/2] imx_sc_thermal: prevent BUG() with rt patch
+
+With the RT patch applied the kernel prints a BUG backtrace during boot:
+
+| BUG: using smp_processor_id() in preemptible [00000000] code: swapper/0/1
+
+Prevent this by avoiding the smp_processor_id call and just check both
+CPU clusters which may be there in a i.MX8 series SoC.
+
+Signed-off-by: Max Krummenacher <max.krummenacher@toradex.com>
+---
+ drivers/thermal/imx_sc_thermal.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/thermal/imx_sc_thermal.c b/drivers/thermal/imx_sc_thermal.c
+index 8c5049020cd8..51a6c73315ba 100644
+--- a/drivers/thermal/imx_sc_thermal.c
++++ b/drivers/thermal/imx_sc_thermal.c
+@@ -58,6 +58,7 @@ sc_ipc_t tsens_ipcHandle;
+ static int imx_sc_tsens_get_temp(void *data, int *temp)
+ {
+ 	struct imx_sc_sensor *sensor = data;
++	int hw_id;
+ 	sc_err_t sciErr;
+ 	int16_t celsius;
+ 	int8_t tenths;
+@@ -65,14 +66,14 @@ static int imx_sc_tsens_get_temp(void *data, int *temp)
+ 	sciErr = sc_misc_get_temp(tsens_ipcHandle, sensor->hw_id,
+ 			SC_C_TEMP, &celsius, &tenths);
+ 	/*
+-	 * if the SS power domain is down, read temp will fail, so
+-	 * we can return the temp of CPU domain instead.
++	 * if the SS power domain is down, read temp will fail,
++	 * try the temp of the potentially two CPU domains instead.
+ 	 */
+-	if (sciErr != SC_ERR_NONE) {
+-		sciErr = sc_misc_get_temp(tsens_ipcHandle,
+-			sensor_hw_id[topology_physical_package_id(smp_processor_id())],
++	hw_id = 0;
++	while (sciErr != SC_ERR_NONE) {
++		sciErr = sc_misc_get_temp(tsens_ipcHandle, sensor_hw_id[hw_id++],
+ 			SC_C_TEMP, &celsius, &tenths);
+-		if (sciErr != SC_ERR_NONE) {
++		if (hw_id > 1) {
+ 			pr_err("read temp sensor:%d failed\n", sensor->hw_id);
+ 			return -EINVAL;
+ 		}
+-- 
+2.20.1
+

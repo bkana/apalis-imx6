@@ -1,0 +1,26 @@
+Remove include path to /usr/include.
+Fixes bitbake warning:
+| WARNING: unclutter-1.09-r0 do_package_qa: QA Issue: unclutter: The compile log indicates that host include and/or library paths were used.
+|          Please check the log '/mnt/sdc2/oe-disk/oe-core_master/build/out-glibc/work/armv7at2hf-neon-angstrom-linux-gnueabi/unclutter/1.09-r0/temp/log.do_compile' for more information. [compile-host-path]
+
+Signed-off-by: Max Krummenacher <max.krummenacher@toradex.com>
+diff -Naur unclutter-1.09.orig/Makefile unclutter-1.09/Makefile
+--- unclutter-1.09.orig/Makefile	2016-07-30 16:43:56.730859141 +0200
++++ unclutter-1.09/Makefile	2016-07-30 16:49:19.603890691 +0200
+@@ -10,7 +10,7 @@
+            MFLAGS = -$(MAKEFLAGS)
+      INSTPGMFLAGS = -c -s
+      INSTMANFLAGS = -c
+-     TOP_INCLUDES = -I$(INCROOT)
++     TOP_INCLUDES =
+       CDEBUGFLAGS = -O
+       ALLINCLUDES = $(STD_INCLUDES) $(TOP_INCLUDES) $(INCLUDES) $(EXTRA_INCLUDES)
+        ALLDEFINES = $(ALLINCLUDES) $(STD_DEFINES) $(PROTO_DEFINES) $(DEFINES) $(COMPATFLAGS)
+@@ -21,7 +21,6 @@
+          IRULESRC = $(CONFIGDIR)
+         IMAKE_CMD = $(IMAKE) -DUseInstalled -I$(IRULESRC) $(IMAKE_DEFINES)
+            BINDIR = $(DESTDIR)/usr/bin/X11
+-          INCROOT = $(DESTDIR)/usr/include
+           MANPATH = $(DESTDIR)/usr/catman/x11_man
+     MANSOURCEPATH = $(MANPATH)/man
+            MANDIR = $(MANSOURCEPATH)1

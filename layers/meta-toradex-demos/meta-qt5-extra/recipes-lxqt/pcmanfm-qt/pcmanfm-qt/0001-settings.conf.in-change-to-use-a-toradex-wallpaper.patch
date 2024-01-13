@@ -1,0 +1,30 @@
+From 12a1469fa171f5d0e50b536a6e073ea5ca45a152 Mon Sep 17 00:00:00 2001
+From: Max Krummenacher <max.krummenacher@toradex.com>
+Date: Wed, 3 Jan 2018 14:33:37 +0100
+Subject: [PATCH] settings.conf.in: change to use a toradex wallpaper
+
+Signed-off-by: Max Krummenacher <max.krummenacher@toradex.com>
+---
+ config/pcmanfm-qt/lxqt/settings.conf.in | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/config/pcmanfm-qt/lxqt/settings.conf.in b/config/pcmanfm-qt/lxqt/settings.conf.in
+index b7ef002..70a1d18 100644
+--- a/config/pcmanfm-qt/lxqt/settings.conf.in
++++ b/config/pcmanfm-qt/lxqt/settings.conf.in
+@@ -14,9 +14,9 @@ SingleClick=false
+ ConfirmDelete=true
+ 
+ [Desktop]
+-WallpaperMode=stretch
+-Wallpaper=@LXQT_SHARE_DIR@/themes/frost/lxqt-origami-light.png
+-BgColor=#000000
++WallpaperMode=center
++Wallpaper=@LXQT_SHARE_DIR@/themes/toradex/toradex.png
++BgColor=#00508c
+ FgColor=#ffffff
+ ShadowColor=#000000
+ ShowHidden=false
+-- 
+2.13.6
+

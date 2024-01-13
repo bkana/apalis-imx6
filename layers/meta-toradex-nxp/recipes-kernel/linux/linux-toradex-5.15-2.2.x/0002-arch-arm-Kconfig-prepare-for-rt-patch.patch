@@ -1,0 +1,28 @@
+From 8e60810e199661b607557e560b329097dc3fea0e Mon Sep 17 00:00:00 2001
+From: Max Krummenacher <max.krummenacher@toradex.com>
+Date: Sun, 13 Nov 2022 13:30:47 +0100
+Subject: [PATCH 2/5] arch/arm/Kconfig: prepare for rt patch
+
+Prepare for applying the RT patch without fuzz (and revert the
+change after the RT patch is applied.
+
+Signed-off-by: Max Krummenacher <max.krummenacher@toradex.com>
+---
+ arch/arm/Kconfig | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index ddeca482323d..a8ae17f5740d 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -125,7 +125,6 @@ config ARM
+ 	select PCI_SYSCALL if PCI
+ 	select PERF_USE_VMALLOC
+ 	select RTC_LIB
+-	select SET_FS
+ 	select SYS_SUPPORTS_APM_EMULATION
+ 	select TRACE_IRQFLAGS_SUPPORT if !CPU_V7M
+ 	# Above selects are sorted alphabetically; please add new ones
+-- 
+2.35.3
+

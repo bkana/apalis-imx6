@@ -1,0 +1,28 @@
+From d75c0cc25075b78730a4ef29823d6fabe2d46a6b Mon Sep 17 00:00:00 2001
+From: Max Krummenacher <max.krummenacher@toradex.com>
+Date: Tue, 2 Jan 2018 10:44:43 +0100
+Subject: [PATCH] session.conf: add qterminal as default terminal
+
+Signed-off-by: Max Krummenacher <max.krummenacher@toradex.com>
+---
+ config/session.conf | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/config/session.conf b/config/session.conf
+index ded6aa8..c0aacf5 100644
+--- a/config/session.conf
++++ b/config/session.conf
+@@ -3,8 +3,10 @@ window_manager=openbox
+ leave_confirmation=true
+ 
+ [Environment]
++BROWSER=
+ GTK_CSD=0
+ GTK_OVERLAY_SCROLLING=0
++TERM=qterminal
+ 
+ [Mouse]
+ cursor_size=18
+-- 
+2.13.6
+

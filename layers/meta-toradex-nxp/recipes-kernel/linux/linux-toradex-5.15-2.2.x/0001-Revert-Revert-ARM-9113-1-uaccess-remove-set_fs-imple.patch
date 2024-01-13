@@ -1,0 +1,44 @@
+From 8f561f0a27a68205ad7a33b3e0fdaf80fc7f96ea Mon Sep 17 00:00:00 2001
+From: Max Krummenacher <max.krummenacher@toradex.com>
+Date: Tue, 9 Aug 2022 14:47:27 +0200
+Subject: [PATCH 1/5] Revert "Revert "ARM: 9113/1: uaccess: remove set_fs()
+ implementation""
+
+Prepare for applying RT-Patch by partly reverting the conflicting
+downstream commit.
+
+This reverts commit ee69377c0fb428a2319ca071bbdbbddbb756cd02.
+
+Signed-off-by: Max Krummenacher <max.krummenacher@toradex.com>
+---
+ arch/arm/include/asm/thread_info.h | 1 -
+ arch/arm/kernel/asm-offsets.c      | 1 -
+ 2 files changed, 2 deletions(-)
+
+diff --git a/arch/arm/include/asm/thread_info.h b/arch/arm/include/asm/thread_info.h
+index bf64b41d47eb..d1f959463e17 100644
+--- a/arch/arm/include/asm/thread_info.h
++++ b/arch/arm/include/asm/thread_info.h
+@@ -54,7 +54,6 @@ struct cpu_context_save {
+ struct thread_info {
+ 	unsigned long		flags;		/* low level flags */
+ 	int			preempt_count;	/* 0 => preemptable, <0 => bug */
+-	mm_segment_t		addr_limit;	/* address limit */
+ 	struct task_struct	*task;		/* main task structure */
+ 	__u32			cpu;		/* cpu */
+ 	__u32			cpu_domain;	/* cpu domain */
+diff --git a/arch/arm/kernel/asm-offsets.c b/arch/arm/kernel/asm-offsets.c
+index 2dc0f59b0053..77a253fe3ff3 100644
+--- a/arch/arm/kernel/asm-offsets.c
++++ b/arch/arm/kernel/asm-offsets.c
+@@ -43,7 +43,6 @@ int main(void)
+   BLANK();
+   DEFINE(TI_FLAGS,		offsetof(struct thread_info, flags));
+   DEFINE(TI_PREEMPT,		offsetof(struct thread_info, preempt_count));
+-  DEFINE(TI_ADDR_LIMIT,		offsetof(struct thread_info, addr_limit));
+   DEFINE(TI_TASK,		offsetof(struct thread_info, task));
+   DEFINE(TI_CPU,		offsetof(struct thread_info, cpu));
+   DEFINE(TI_CPU_DOMAIN,		offsetof(struct thread_info, cpu_domain));
+-- 
+2.35.3
+

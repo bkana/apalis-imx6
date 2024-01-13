@@ -1,0 +1,65 @@
+From eb5259acd986ec6862bf709f551da187057471ae Mon Sep 17 00:00:00 2001
+From: Philippe Schenker <philippe.schenker@toradex.com>
+Date: Mon, 14 Nov 2022 16:04:47 +0100
+Subject: [PATCH] ARM: dts: colibri-imx6ull: Enable dual-role switching
+
+The Colibri standard provides a GPIO called USBC_DET to switch from
+USB Host to USB Device and back. Make use of this GPIO by adding it
+with usb-connector framework.
+
+Upstream-Status: Submitted [https://lore.kernel.org/all/20221115180554.73696-1-dev@pschenker.ch/]
+Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
+---
+ arch/arm/boot/dts/imx6ull-colibri.dtsi | 29 ++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+
+diff --git a/arch/arm/boot/dts/imx6ull-colibri.dtsi b/arch/arm/boot/dts/imx6ull-colibri.dtsi
+index a4429ba1f2ae..336ab2e0534c 100644
+--- a/arch/arm/boot/dts/imx6ull-colibri.dtsi
++++ b/arch/arm/boot/dts/imx6ull-colibri.dtsi
+@@ -24,6 +24,28 @@ backlight: backlight {
+ 		status = "disabled";
+ 	};
+ 
++	connector {
++		compatible = "gpio-usb-b-connector", "usb-b-connector";
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_snvs_usbc_det>;
++		id-gpios = <&gpio5 2 GPIO_ACTIVE_HIGH>; /* SODIMM 137 / USBC_DET */
++		label = "USBC";
++		self-powered;
++		type = "micro";
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				usb_dr_connector: endpoint {
++					remote-endpoint = <&usb1_drd_sw>;
++				};
++			};
++		};
++	};
++
+ 	gpio-keys {
+ 		compatible = "gpio-keys";
+ 		pinctrl-names = "default";
+@@ -280,6 +302,13 @@ &usbotg1 {
+ 	srp-disable;
+ 	hnp-disable;
+ 	adp-disable;
++	usb-role-switch;
++
++	port {
++		usb1_drd_sw: endpoint {
++			remote-endpoint = <&usb_dr_connector>;
++		};
++	};
+ };
+ 
+ /* Colibri USBH */
+-- 
+2.38.1
+
